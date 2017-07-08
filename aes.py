@@ -276,7 +276,8 @@ def mix_columns( matrix ):
 #############################################################################################################
 '''				
 
-def encrypt(input_matrix, round_keys):
+def encrypt(input_matrix, key_matrix):
+	round_keys = key_schedule( key_matrix )
 	# at the 0th round xor input_matrix with the input_key
 	state = add_round_key(input_matrix, round_keys[0])
 	for i in range(1,10):
@@ -303,15 +304,13 @@ def pkcs7_pad( text ):
 k = bytes( os.urandom(16) )
 print('Key: ',k)
 key_matrix = block2matrix( list(k) )
-
-round_keys = key_schedule( key_matrix )	
-
+	
 # 16 byte input
 text = b'test data'
 padded_text = pkcs7_pad(text)
 
 input_matrix = block2matrix( padded_text )
 
-output_matrix = encrypt(input_matrix, round_keys)
+output_matrix = encrypt(input_matrix, key_matrix)
 ciphertext = bytes( matrix2block( output_matrix ) )
 print('Ciphertext: ', ciphertext)
